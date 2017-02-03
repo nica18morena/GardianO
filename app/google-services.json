@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "466657325617",
+    "firebase_url": "https://guardiano-12550.firebaseio.com",
+    "project_id": "guardiano-12550",
+    "storage_bucket": "guardiano-12550.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:466657325617:android:25979b52f0abe336",
+        "android_client_info": {
+          "package_name": "com.example.jessi.guardiano"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "466657325617-587e0okp35hrbb7sfui29o38qdsuto8c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRmJZp46I66mJkdJGIyWIeuTCBOt98bgA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
