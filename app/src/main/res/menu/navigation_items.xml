@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_calendar"
+        android:title="@string/menu_calendar"
+        android:icon="@drawable/ic_action_date_range" />
+    <item android:id="@+id/action_plan"
+        android:title="@string/menu_plan"
+        android:icon="@drawable/ic_action_plan" />
+    <item android:id="@+id/action_settings"
+        android:title="@string/menu_settings"
+        android:icon="@drawable/ic_action_settings" />
+</menu>
