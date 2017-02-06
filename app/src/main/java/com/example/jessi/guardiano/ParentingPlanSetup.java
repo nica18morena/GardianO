@@ -6,6 +6,8 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.DialogFragment;
@@ -33,6 +35,7 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parenting_plan_setup);
+
         //TODO:Remove redundant code
         // Spinner element
         Spinner spinnerWeekend = (Spinner) findViewById(R.id.spinner_weekend_options);
@@ -76,7 +79,7 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         spinnerWeekday.setAdapter(dataAdapterWeekend);
 
         //call bottom navigation
-        //bottomNavigationViewListener();
+        bottomNavigationViewListener();
     }
 
     @Override
@@ -85,7 +88,7 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         String item = parent.getItemAtPosition(position).toString();
 
         // Showing selected spinner item
-        Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+        //Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
     }
     public void onNothingSelected(AdapterView<?> arg0) {
         // TODO Auto-generated method stub
@@ -98,32 +101,27 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
 
     public void bottomNavigationViewListener() {
         //TODO: get the cases to call different Activity (pages)
-        final TextView textCalendar = (TextView) findViewById(R.id.action_calendar);
-        final TextView textPlan = (TextView) findViewById(R.id.action_plan);
-        final TextView textSettings = (TextView) findViewById(R.id.action_settings);
+        final Context context = this;
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.navigation);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
+
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.action_calendar:
-                                textCalendar.setVisibility(View.VISIBLE);
-                                textPlan.setVisibility(View.GONE);
-                                textSettings.setVisibility(View.GONE);
+                                Intent intent1 = new Intent(context, Calendar.class);
+                                startActivity(intent1);
                                 break;
                             case R.id.action_plan:
-                                textCalendar.setVisibility(View.GONE);
-                                textPlan.setVisibility(View.VISIBLE);
-                                textSettings.setVisibility(View.GONE);
+                                Intent intent2 = new Intent(context, ParentingPlanSetup.class);
+                                startActivity(intent2);
                                 break;
                             case R.id.action_settings:
-                                textCalendar.setVisibility(View.GONE);
-                                textPlan.setVisibility(View.GONE);
-                                textSettings.setVisibility(View.VISIBLE);
+
                                 break;
                         }
                         return true;
@@ -131,54 +129,4 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
                 });
     }
 
-    /*public void addListeneronButton(){
-
-        weekendDropoffTimeButton = (Button) findViewById(R.id.button_drop_off);
-
-        weekendDropoffTimeButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                showDialog(TIME_DIALOG_ID);
-
-            }
-
-        });
-    }*/
-    /*@Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case TIME_DIALOG_ID:
-                // set time picker as current time
-                return new TimePickerDialog(this,
-                        timePickerListener, hour, minute,false);
-
-        }
-        return null;
-    }*/
-
-    /*private TimePickerDialog.OnTimeSetListener timePickerListener =
-            new TimePickerDialog.OnTimeSetListener() {
-                public void onTimeSet(TimePicker view, int selectedHour,
-                                      int selectedMinute) {
-                    hour = selectedHour;
-                    minute = selectedMinute;
-
-                    // set current time into textview
-                    weekendDropOffTimeText.setText(new StringBuilder().append(pad(hour))
-                            .append(":").append(pad(minute)));
-
-                    // set current time into timepicker
-                    timePicker.setCurrentHour(hour);
-                    timePicker.setCurrentMinute(minute);
-
-                }
-            };*/
-    private static String pad(int c) {
-        if (c >= 10)
-            return String.valueOf(c);
-        else
-            return "0" + String.valueOf(c);
-    }
 }
