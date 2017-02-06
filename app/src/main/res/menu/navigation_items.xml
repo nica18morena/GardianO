@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_calendar"
         android:title="@string/menu_calendar"
-        android:icon="@drawable/ic_action_date_range" />
+        android:icon="@drawable/ic_action_date_range"
+        android:enabled="true"
+        app:showAsAction="ifRoom"/>
     <item android:id="@+id/action_plan"
         android:title="@string/menu_plan"
-        android:icon="@drawable/ic_action_plan" />
+        android:icon="@drawable/ic_action_plan"
+        android:enabled="true"
+        app:showAsAction="ifRoom"/>
     <item android:id="@+id/action_settings"
         android:title="@string/menu_settings"
-        android:icon="@drawable/ic_action_settings" />
+        android:icon="@drawable/ic_action_settings"
+        android:enabled="true"
+        app:showAsAction="ifRoom"/>
 </menu>

@@ -6,9 +6,12 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,7 +21,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
-
+//TODO: code clean up
 public class ParentingPlanSetup extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     private TextView weekendDropOffTimeText, weekendPickUpTimeText;
@@ -30,35 +33,50 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parenting_plan_setup);
-
+        //TODO:Remove redundant code
         // Spinner element
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_weekend_options);
+        Spinner spinnerWeekend = (Spinner) findViewById(R.id.spinner_weekend_options);
+        Spinner spinnerWeekday = (Spinner) findViewById(R.id.spinner_weekday_options);
 
         // Spinner click listener
-        spinner.setOnItemSelectedListener(this);
+        spinnerWeekend.setOnItemSelectedListener(this);
+        spinnerWeekday.setOnItemSelectedListener(this);
 
         // Spinner Drop down elements
-        List<String> categories = new ArrayList<String>();
-        categories.add("Every");
-        categories.add("Every other");
-        categories.add("First wknd of mos");
-        categories.add("Second wknd of mos");
-        categories.add("Third wknd of mos");
-        categories.add("Fourth wknd of mos");
-        categories.add("Fifth wknd of mos");
-        categories.add("None");
+        List<String> categoriesWeekend = new ArrayList<String>();
+        categoriesWeekend.add("Every");
+        categoriesWeekend.add("Every other");
+        categoriesWeekend.add("First wknd of mos");
+        categoriesWeekend.add("Second wknd of mos");
+        categoriesWeekend.add("Third wknd of mos");
+        categoriesWeekend.add("Fourth wknd of mos");
+        categoriesWeekend.add("Fifth wknd of mos");
+        categoriesWeekend.add("None");
+
+        List<String> categoriesWeekdays = new ArrayList<String>();
+        categoriesWeekdays.add("Every");
+        categoriesWeekdays.add("Every other");
+        categoriesWeekdays.add("First week of mos");
+        categoriesWeekdays.add("Second week of mos");
+        categoriesWeekdays.add("Third week of mos");
+        categoriesWeekdays.add("Fourth week of mos");
+        categoriesWeekdays.add("Fifth week of mos");
+        categoriesWeekdays.add("None");
 
         // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
+        ArrayAdapter<String> dataAdapterWeekend = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categoriesWeekend);
+        ArrayAdapter<String> dataAdapterWeekday = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categoriesWeekdays);
 
         // Drop down layout style - list view with radio button
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dataAdapterWeekend.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dataAdapterWeekday.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // attaching data adapter to spinner
-        spinner.setAdapter(dataAdapter);
+        spinnerWeekend.setAdapter(dataAdapterWeekend);
+        spinnerWeekday.setAdapter(dataAdapterWeekend);
 
-        //call date time pickers
-        //addListeneronButton();
+        //call bottom navigation
+        //bottomNavigationViewListener();
     }
 
     @Override
@@ -76,6 +94,41 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
     public void showTimePickerDialog(View v) {
         DialogFragment newFragment = new TimePickerFragment();
         newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    public void bottomNavigationViewListener() {
+        //TODO: get the cases to call different Activity (pages)
+        final TextView textCalendar = (TextView) findViewById(R.id.action_calendar);
+        final TextView textPlan = (TextView) findViewById(R.id.action_plan);
+        final TextView textSettings = (TextView) findViewById(R.id.action_settings);
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.navigation);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_calendar:
+                                textCalendar.setVisibility(View.VISIBLE);
+                                textPlan.setVisibility(View.GONE);
+                                textSettings.setVisibility(View.GONE);
+                                break;
+                            case R.id.action_plan:
+                                textCalendar.setVisibility(View.GONE);
+                                textPlan.setVisibility(View.VISIBLE);
+                                textSettings.setVisibility(View.GONE);
+                                break;
+                            case R.id.action_settings:
+                                textCalendar.setVisibility(View.GONE);
+                                textPlan.setVisibility(View.GONE);
+                                textSettings.setVisibility(View.VISIBLE);
+                                break;
+                        }
+                        return true;
+                    }
+                });
     }
 
     /*public void addListeneronButton(){

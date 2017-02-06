@@ -40,6 +40,6 @@ public class TimePickerFragment extends DialogFragment
         pickerMin = minute;
 
         TextView tv = (TextView) getActivity().findViewById(R.id.text_drop_off);
-        tv.setText(String.valueOf(hourOfDay) +":" + String.valueOf(minute) + " "+ am_pm);
+        tv.setText(String.valueOf(pickerHour) +":" + String.valueOf(pickerMin) + " "+ am_pm);
     }
 }

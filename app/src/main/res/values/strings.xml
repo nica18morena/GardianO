@@ -19,5 +19,11 @@
     <string name="drop_off_fragment">Drop off</string>
     <string name="pick_up_fragment">Pick up</string>
     <string name="text_default_time">12:00 AM</string>
+    <string name="weekday">Weekday</string>
+    <string name="Monday">Mon</string>
+    <string name="Tuesday">Tue</string>
+    <string name="Wednesday">Wed</string>
+    <string name="Thursday">Thur</string>
+    <string name="Friday">Fri</string>
 
 </resources>
