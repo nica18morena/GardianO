@@ -102,13 +102,15 @@
             android:layout_height="wrap_content"
             android:id="@+id/yes_radio_button"
             android:text="@string/yes"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:onClick="onRadioButtonClicked"/>
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/no_radio_button"
             android:text="@string/no"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:onClick="onRadioButtonClicked"/>
     </RadioGroup>
     </LinearLayout>
 
@@ -116,7 +118,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layout_q_school_age"
-        android:id="@+id/layout_q_same_schedule">
+        android:id="@+id/layout_q_same_schedule"
+        android:visibility="gone">
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -134,13 +137,15 @@
             android:layout_height="wrap_content"
             android:id="@+id/yes2_radio_button"
             android:text="@string/yes"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:onClick="onRadioButtonClicked"/>
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/no2_radio_button"
             android:text="@string/no"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:onClick="onRadioButtonClicked"/>
     </RadioGroup>
     </LinearLayout>
 
@@ -148,7 +153,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layout_q_same_schedule"
-        android:id="@+id/layout_weekend_schedule">
+        android:id="@+id/layout_weekend_schedule"
+        android:visibility="gone">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -166,7 +173,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layout_weekend_schedule"
-        android:id="@+id/layout_wekend_time_picker">
+        android:id="@+id/layout_weekend_time_picker"
+        android:visibility="gone">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -195,8 +203,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_wekend_time_picker"
-        android:id="@+id/layout_weekday_schedule">
+        android:layout_below="@id/layout_weekend_time_picker"
+        android:id="@+id/layout_weekday_schedule"
+        android:visibility="gone">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -213,7 +222,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/layout_weekday_selection"
         android:layout_below="@id/layout_weekday_schedule"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -250,7 +260,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layout_weekday_selection"
-        android:id="@+id/layout_weekday_time_picker">
+        android:id="@+id/layout_weekday_time_picker"
+        android:visibility="gone">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

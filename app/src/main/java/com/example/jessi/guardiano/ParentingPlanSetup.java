@@ -18,11 +18,17 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
+
+import static java.security.AccessController.getContext;
+
 //TODO: code clean up
 public class ParentingPlanSetup extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
@@ -127,6 +133,61 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
                         return true;
                     }
                 });
+    }
+
+    public void onRadioButtonClicked(View view) {
+
+        boolean checked = ((RadioButton) view).isChecked();
+
+        LinearLayout llUnderSchoolAge   = (LinearLayout) findViewById(R.id.layout_q_same_schedule);
+        LinearLayout llSameSchedule1    = (LinearLayout) findViewById(R.id.layout_weekend_schedule);
+        LinearLayout llSameSchedule2    = (LinearLayout) findViewById(R.id.layout_weekend_schedule);
+        LinearLayout llWeekdaySelection = (LinearLayout) findViewById(R.id.layout_weekday_selection);
+        LinearLayout llTimePicker1      = (LinearLayout) findViewById(R.id.layout_weekend_time_picker);
+        LinearLayout llTimePicker2      = (LinearLayout) findViewById(R.id.layout_weekday_time_picker);
+
+        //Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.yes_radio_button:
+                if (checked){
+                    //something
+                    llUnderSchoolAge.setVisibility(View.VISIBLE);
+                }
+                break;
+            case R.id.yes2_radio_button:
+                if (checked) {
+                    //something
+                    llSameSchedule1.setVisibility(View.VISIBLE);
+                    llTimePicker1.setVisibility(View.VISIBLE);
+                    llSameSchedule2.setVisibility(View.VISIBLE);
+                    llWeekdaySelection.setVisibility(View.VISIBLE);
+                    llTimePicker2.setVisibility(View.VISIBLE);
+                }
+                break;
+            case R.id.no_radio_button:
+                if (checked){
+                    //something
+                    llUnderSchoolAge.setVisibility(View.GONE);
+
+                    llSameSchedule1.setVisibility(View.GONE);
+                    llTimePicker1.setVisibility(View.GONE);
+                    llSameSchedule2.setVisibility(View.GONE);
+                    llWeekdaySelection.setVisibility(View.GONE);
+                    llTimePicker2.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.no2_radio_button:
+                if (checked) {
+                    //something
+                    llSameSchedule1.setVisibility(View.GONE);
+                    llTimePicker1.setVisibility(View.GONE);
+                    llSameSchedule2.setVisibility(View.GONE);
+                    llWeekdaySelection.setVisibility(View.GONE);
+                    llTimePicker2.setVisibility(View.GONE);
+                }
+                break;
+        }
+
     }
 
 }
