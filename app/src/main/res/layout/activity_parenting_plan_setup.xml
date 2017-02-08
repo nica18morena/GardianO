@@ -11,293 +11,323 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp">
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPhonetic"
-        android:id="@+id/editPlanName"
-        android:hint="@string/plan_name" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@id/editPlanName"
-        android:id="@+id/linear_layout_child">
-        <EditText
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:id="@+id/text_child_name"
-            android:hint="@string/child_name"/>
-        <!--TODO: Add child date of birth-->
-        <EditText
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:inputType="date"
-            android:id="@+id/text_child_DOB"
-            android:hint="@string/child_DOB"/>
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/image_button_add_remove"
-            android:src="@drawable/ic_action_add"
-            android:contentDescription="@string/add_child"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/layout_schedule_text"
-        android:layout_below="@id/linear_layout_child">
-        <TextView
-            android:id="@+id/TextSheduleTitle"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/text_schedule_title"
-            android:textSize="24sp"/>
+            android:layout_margin="16dp">
 
-        <TextView
-            android:id="@+id/textScheduleDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/text_schedule_description"
-            android:textSize="12sp"/>
+            <EditText
+                android:id="@+id/editPlanName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/plan_name"
+                android:inputType="textPhonetic" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/textSchoolSchedule"
-            android:text="@string/text_school_schedule"
-            android:textSize="20sp"/>
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linear_layout_child"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editPlanName"
+                android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layout_schedule_text"
-        android:id="@+id/layout_q_school_age">
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/textSchoolAgeQuestion"
-        android:text="@string/text_school_age_question"
-        android:textSize="16sp"
-        android:layout_weight="1"/>
+                <EditText
+                    android:id="@+id/text_child_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/child_name"
+                    android:inputType="textPersonName" />
+                <!--TODO: Add child date of birth-->
+                <EditText
+                    android:id="@+id/text_child_DOB"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/child_DOB"
+                    android:inputType="date" />
 
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/radio_group_school_age">
+                <ImageButton
+                    android:id="@+id/image_button_add_remove"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/add_child"
+                    android:onClick="addImageButtonClicked"
+                    android:src="@drawable/ic_action_add" />
+            </LinearLayout>
 
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/yes_radio_button"
-            android:text="@string/yes"
-            android:textSize="16sp"
-            android:onClick="onRadioButtonClicked"/>
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/no_radio_button"
-            android:text="@string/no"
-            android:textSize="16sp"
-            android:onClick="onRadioButtonClicked"/>
-    </RadioGroup>
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layout_schedule_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_layout_child"
+                android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layout_q_school_age"
-        android:id="@+id/layout_q_same_schedule"
-        android:visibility="gone">
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/text_use_same_schedule_question"
-        android:text="@string/text_use_same_question"
-        android:textSize="16sp"
-        android:layout_weight="1"/>
+                <TextView
+                    android:id="@+id/TextSheduleTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_schedule_title"
+                    android:textSize="24sp" />
 
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/radio_group_use_same_q">
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/yes2_radio_button"
-            android:text="@string/yes"
-            android:textSize="16sp"
-            android:onClick="onRadioButtonClicked"/>
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/no2_radio_button"
-            android:text="@string/no"
-            android:textSize="16sp"
-            android:onClick="onRadioButtonClicked"/>
-    </RadioGroup>
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/textScheduleDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/text_schedule_description"
+                    android:textSize="12sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layout_q_same_schedule"
-        android:id="@+id/layout_weekend_schedule"
-        android:visibility="gone">
+                <TextView
+                    android:id="@+id/textSchoolSchedule"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_school_schedule"
+                    android:textSize="20sp" />
+            </LinearLayout>
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/layout_q_school_age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_schedule_text">
+
+                <TextView
+                    android:id="@+id/textSchoolAgeQuestion"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/text_school_age_question"
+                    android:textSize="16sp" />
+
+                <RadioGroup
+                    android:id="@+id/radio_group_school_age"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/yes_radio_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="onRadioButtonClicked"
+                        android:text="@string/yes"
+                        android:textSize="16sp" />
+
+                    <RadioButton
+                        android:id="@+id/no_radio_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="onRadioButtonClicked"
+                        android:text="@string/no"
+                        android:textSize="16sp" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_q_same_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_q_school_age"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/text_use_same_schedule_question"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/text_use_same_question"
+                    android:textSize="16sp" />
+
+                <RadioGroup
+                    android:id="@+id/radio_group_use_same_q"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/yes2_radio_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="onRadioButtonClicked"
+                        android:text="@string/yes"
+                        android:textSize="16sp" />
+
+                    <RadioButton
+                        android:id="@+id/no2_radio_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="onRadioButtonClicked"
+                        android:text="@string/no"
+                        android:textSize="16sp" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_weekend_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_q_same_schedule"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/weekend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/weekend" />
+
+                <Spinner
+                    android:id="@+id/spinner_weekend_options"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_weekend_time_picker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_weekend_schedule"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/text_drop_off"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_default_time" />
+
+                <Button
+                    android:id="@+id/button_drop_off"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="showTimePickerDialog"
+                    android:text="@string/drop_off_fragment" />
+
+                <TextView
+                    android:id="@+id/text_pick_up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_default_time" />
+
+                <Button
+                    android:id="@+id/button_pick_up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="showTimePickerDialog"
+                    android:text="@string/pick_up_fragment" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_weekday_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_weekend_time_picker"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/weekday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/weekday" />
+
+                <Spinner
+                    android:id="@+id/spinner_weekday_options"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_weekday_selection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/weekend"
-                android:text="@string/weekend"/>
+                android:layout_below="@id/layout_weekday_schedule"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
-        <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/spinner_weekend_options">
-        </Spinner>
-    </LinearLayout>
+                <CheckBox
+                    android:id="@+id/checkbox_Monaday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Monday"
+                    android:textSize="16sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layout_weekend_schedule"
-        android:id="@+id/layout_weekend_time_picker"
-        android:visibility="gone">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/text_drop_off"
-            android:text="@string/text_default_time"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/button_drop_off"
-            android:text="@string/drop_off_fragment"
-            android:onClick="showTimePickerDialog"/>
+                <CheckBox
+                    android:id="@+id/checkbox_Tuesday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Tuesday"
+                    android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/text_pick_up"
-            android:text="@string/text_default_time"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/button_pick_up"
-            android:text="@string/pick_up_fragment"
-            android:onClick="showTimePickerDialog"/>
-    </LinearLayout>
+                <CheckBox
+                    android:id="@+id/checkbox_Wednesday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Wednesday"
+                    android:textSize="16sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layout_weekend_time_picker"
-        android:id="@+id/layout_weekday_schedule"
-        android:visibility="gone">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/weekday"
-            android:text="@string/weekday"/>
-        <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/spinner_weekday_options">
-        </Spinner>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/layout_weekday_selection"
-        android:layout_below="@id/layout_weekday_schedule"
-        android:orientation="horizontal"
-        android:visibility="gone">
-            <CheckBox
+                <CheckBox
+                    android:id="@+id/checkbox_Thursday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Thursday"
+                    android:textSize="16sp" />
+
+                <CheckBox
+                    android:id="@+id/checkbox_Friday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Friday"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_weekday_time_picker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_weekday_selection"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/text_drop_off_weekday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_default_time" />
+
+                <Button
+                    android:id="@+id/button_drop_off_weekday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="showTimePickerDialog"
+                    android:text="@string/drop_off_fragment" />
+
+                <TextView
+                    android:id="@+id/text_pick_up_weekday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_default_time" />
+
+                <Button
+                    android:id="@+id/button_pick_up_weekday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="showTimePickerDialog"
+                    android:text="@string/pick_up_fragment" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/button_first_page"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/checkbox_Monaday"
-                android:text="@string/Monday"
-                android:textSize="16sp"/>
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/checkbox_Tuesday"
-                android:text="@string/Tuesday"
-                android:textSize="16sp"/>
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/checkbox_Wednesday"
-                android:text="@string/Wednesday"
-                android:textSize="16sp"/>
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/checkbox_Thursday"
-                android:text="@string/Thursday"
-                android:textSize="16sp"/>
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/checkbox_Friday"
-                android:text="@string/Friday"
-                android:textSize="16sp"/>
-    </LinearLayout>
+                android:layout_below="@id/layout_weekday_time_picker"
+                android:text="@string/next" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layout_weekday_selection"
-        android:id="@+id/layout_weekday_time_picker"
-        android:visibility="gone">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/text_drop_off_weekday"
-            android:text="@string/text_default_time"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/button_drop_off_weekday"
-            android:text="@string/drop_off_fragment"
-            android:onClick="showTimePickerDialog"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/text_pick_up_weekday"
-            android:text="@string/text_default_time"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/button_pick_up_weekday"
-            android:text="@string/pick_up_fragment"
-            android:onClick="showTimePickerDialog"/>
-        </LinearLayout>
-
-
-    </RelativeLayout>
+        </RelativeLayout>
     </ScrollView>
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:menu="@menu/navigation_items"
+        android:layout_alignParentBottom="true"
         app:itemBackground="@color/colorPrimary"
         app:itemIconTint="@color/colorAccent"
         app:itemTextColor="@color/colorAccent"
-        android:layout_alignParentBottom="true"/>
+        app:menu="@menu/navigation_items" />
 </RelativeLayout>
 

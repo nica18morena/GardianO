@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -30,13 +31,14 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import static java.security.AccessController.getContext;
 
 //TODO: code clean up
-public class ParentingPlanSetup extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+public class ParentingPlanSetup extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private TextView weekendDropOffTimeText, weekendPickUpTimeText;
     private TimePicker timePicker;
     private Button weekendDropoffTimeButton, weekendPickUpTimeButton;
     private int hour, minute;
     static final int TIME_DIALOG_ID = 999;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +98,7 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         // Showing selected spinner item
         //Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
     }
+
     public void onNothingSelected(AdapterView<?> arg0) {
         // TODO Auto-generated method stub
     }
@@ -127,7 +130,8 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
                                 startActivity(intent2);
                                 break;
                             case R.id.action_settings:
-
+                                Intent intent3 = new Intent(context, SettingsActivity.class);
+                                startActivity(intent3);
                                 break;
                         }
                         return true;
@@ -139,17 +143,17 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
 
         boolean checked = ((RadioButton) view).isChecked();
 
-        LinearLayout llUnderSchoolAge   = (LinearLayout) findViewById(R.id.layout_q_same_schedule);
-        LinearLayout llSameSchedule1    = (LinearLayout) findViewById(R.id.layout_weekend_schedule);
-        LinearLayout llSameSchedule2    = (LinearLayout) findViewById(R.id.layout_weekend_schedule);
+        LinearLayout llUnderSchoolAge = (LinearLayout) findViewById(R.id.layout_q_same_schedule);
+        LinearLayout llSameSchedule1 = (LinearLayout) findViewById(R.id.layout_weekend_schedule);
+        LinearLayout llSameSchedule2 = (LinearLayout) findViewById(R.id.layout_weekday_schedule);
         LinearLayout llWeekdaySelection = (LinearLayout) findViewById(R.id.layout_weekday_selection);
-        LinearLayout llTimePicker1      = (LinearLayout) findViewById(R.id.layout_weekend_time_picker);
-        LinearLayout llTimePicker2      = (LinearLayout) findViewById(R.id.layout_weekday_time_picker);
+        LinearLayout llTimePicker1 = (LinearLayout) findViewById(R.id.layout_weekend_time_picker);
+        LinearLayout llTimePicker2 = (LinearLayout) findViewById(R.id.layout_weekday_time_picker);
 
         //Check which radio button was clicked
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.yes_radio_button:
-                if (checked){
+                if (checked) {
                     //something
                     llUnderSchoolAge.setVisibility(View.VISIBLE);
                 }
@@ -157,15 +161,15 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
             case R.id.yes2_radio_button:
                 if (checked) {
                     //something
-                    llSameSchedule1.setVisibility(View.VISIBLE);
-                    llTimePicker1.setVisibility(View.VISIBLE);
-                    llSameSchedule2.setVisibility(View.VISIBLE);
-                    llWeekdaySelection.setVisibility(View.VISIBLE);
-                    llTimePicker2.setVisibility(View.VISIBLE);
+                    llSameSchedule1.setVisibility(View.GONE);
+                    llTimePicker1.setVisibility(View.GONE);
+                    llSameSchedule2.setVisibility(View.GONE);
+                    llWeekdaySelection.setVisibility(View.GONE);
+                    llTimePicker2.setVisibility(View.GONE);
                 }
                 break;
             case R.id.no_radio_button:
-                if (checked){
+                if (checked) {
                     //something
                     llUnderSchoolAge.setVisibility(View.GONE);
 
@@ -179,15 +183,21 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
             case R.id.no2_radio_button:
                 if (checked) {
                     //something
-                    llSameSchedule1.setVisibility(View.GONE);
-                    llTimePicker1.setVisibility(View.GONE);
-                    llSameSchedule2.setVisibility(View.GONE);
-                    llWeekdaySelection.setVisibility(View.GONE);
-                    llTimePicker2.setVisibility(View.GONE);
+                    llSameSchedule1.setVisibility(View.VISIBLE);
+                    llTimePicker1.setVisibility(View.VISIBLE);
+                    llSameSchedule2.setVisibility(View.VISIBLE);
+                    llWeekdaySelection.setVisibility(View.VISIBLE);
+                    llTimePicker2.setVisibility(View.VISIBLE);
                 }
                 break;
         }
 
     }
 
+    public void addImageButtonClicked(View view) {
+
+        //ImageButton ibAdd = (ImageButton) this.findViewById(R.id.image_button_add_remove);
+
+
+    }
 }
