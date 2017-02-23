@@ -41,7 +41,8 @@ public class Calendar extends AppCompatActivity {
                                 startActivity(intent2);
                                 break;
                             case R.id.action_settings:
-
+                                Intent intent3 = new Intent(context, SettingsActivity.class);
+                                startActivity(intent3);
                                 break;
                         }
                         return true;
