@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="com.example.jessi.guardiano.ParentingPlanSetup">
-    <!--TODO:get the right padding around app-->
+
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
@@ -350,7 +350,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/layout_weekday_time_picker"
                 android:text="@string/next"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:onClick="onNextButtonClicked"/>
 
         </RelativeLayout>
     </ScrollView>

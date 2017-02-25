@@ -19,6 +19,7 @@ public class TimePickerFragment extends DialogFragment
                                     implements TimePickerDialog.OnTimeSetListener{
     private int pickerHour, pickerMin;
     private String am_pm;
+    private TextView tvText;
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current time as the default values for the picker
@@ -32,14 +33,17 @@ public class TimePickerFragment extends DialogFragment
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        // Do something with the time chosen by the user
 
+        // Do something with the time chosen by the user
         am_pm = hourOfDay > 12? "PM" : "AM";
 
         pickerHour = hourOfDay > 12? hourOfDay - 12 : hourOfDay;
         pickerMin = minute;
 
-        TextView tv = (TextView) getActivity().findViewById(R.id.text_drop_off);
-        tv.setText(String.valueOf(pickerHour) +":" + String.valueOf(pickerMin) + " "+ am_pm);
+        tvText.setText(String.valueOf(pickerHour) +":" + String.valueOf(pickerMin) + " "+ am_pm);
+    }
+
+    public void setTvText(TextView tv){
+        this.tvText = tv;
     }
 }

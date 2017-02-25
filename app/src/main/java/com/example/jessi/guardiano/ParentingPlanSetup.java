@@ -34,12 +34,18 @@ import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.example.jessi.guardiano.DataObjects.Children;
 import com.example.jessi.guardiano.DataObjects.Plan;
+import com.example.jessi.guardiano.DataObjects.UnderSchoolAgeScheduleWeekday;
+import com.example.jessi.guardiano.DataObjects.UnderSchoolAgeScheduleWeekend;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import static com.example.jessi.guardiano.R.id.button_drop_off;
+import static com.example.jessi.guardiano.R.id.button_drop_off_weekday;
+import static com.example.jessi.guardiano.R.id.button_pick_up;
+import static com.example.jessi.guardiano.R.id.button_pick_up_weekday;
 import static com.example.jessi.guardiano.R.id.editPlanName;
 import static com.example.jessi.guardiano.R.id.spinner_weekday_options;
 import static com.example.jessi.guardiano.R.id.spinner_weekend_options;
@@ -50,18 +56,23 @@ import static java.security.AccessController.getContext;
 //TODO: code clean up
 public class ParentingPlanSetup extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private TextView weekendDropOffTimeText, weekendPickUpTimeText;
+    private TextView tvweekendDropOffTimeText, tvweekendPickUpTimeText,
+                     tvweekdayDropOffTimeText, tvweekdayPickUpTimeText;
     private TextView tvPlanName, tvChildName, tvChildDOB;
     private EditText mPlanName, mChildName, mChildDOB;
+    private Spinner sweekendFrequency, sweekdayFrequency;
     private TimePicker timePicker;
-    private Button weekendDropoffTimeButton, weekendPickUpTimeButton;
+    private Button weekendDropoffTimeButton, weekendPickUpTimeButton, buttonNext;
     private int hour, minute;
-    private String planName, planStart, childName, childDOB;
+    private String planName, planStart, childName, childDOB, weekendFrequency, weekdayFrequency;
+    private String weekendDropOffTime, weekendPickUpTime,
+            weekdayDropOffTime, weekdayPickUpTime;
     static final int TIME_DIALOG_ID = 999;
 
     private FirebaseDatabase mfirebaseDatabase;
     private DatabaseReference mDatabaseReferenceP, mDatabaseReferenceC, mDatabaseReference;
     private ChildEventListener mChildEventListenerP, mChildEventListenerC, mChildEventListener;
+    private LinearLayout llUnderSchoolAge, llSameSchedule1, llSameSchedule2, llWeekdaySelection, llTimePicker1, llTimePicker2 ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +83,21 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         tvPlanName = (TextView) findViewById(R.id.textView_planName);
         tvChildName = (TextView) findViewById(R.id.textView_childName);
         tvChildDOB = (TextView) findViewById(R.id.textView_childDOB);
+        tvweekdayDropOffTimeText = (TextView) findViewById(R.id.text_drop_off_weekday);
+        tvweekdayPickUpTimeText = (TextView) findViewById(R.id.text_pick_up_weekday);
+        tvweekendDropOffTimeText = (TextView) findViewById(R.id.text_drop_off);
+        tvweekendPickUpTimeText = (TextView) findViewById(R.id.text_pick_up);
+
+        //Initiate layouts
+        llUnderSchoolAge = (LinearLayout) findViewById(R.id.layout_q_same_schedule);
+        llSameSchedule1 = (LinearLayout) findViewById(R.id.layout_weekend_schedule);
+        llSameSchedule2 = (LinearLayout) findViewById(R.id.layout_weekday_schedule);
+        llWeekdaySelection = (LinearLayout) findViewById(R.id.layout_weekday_selection);
+        llTimePicker1 = (LinearLayout) findViewById(R.id.layout_weekend_time_picker);
+        llTimePicker2 = (LinearLayout) findViewById(R.id.layout_weekday_time_picker);
+
+        //initiate buttons
+        buttonNext = (Button) findViewById(R.id.button_first_page);
 
         //Database access
         mfirebaseDatabase = FirebaseDatabase.getInstance();
@@ -151,13 +177,14 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-
+    //TODO: Temperarly save state here
                 boolean done = false;
                 Context context = getApplicationContext();
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
 
                     String text = v.getText().toString();
-                    Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+                    //Todo: Remove this toast
+                    //Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
 
                     switch (v.getId()) {
                         case editPlanName:
@@ -178,7 +205,8 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
                     }
                 } else if (actionId == EditorInfo.IME_ACTION_DONE) {
                     String text = v.getText().toString();
-                    Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+                    //TODO: remove this toast
+                    // Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
                     done = true;
 
                     switch (v.getId()) {
@@ -189,30 +217,9 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
                 }
 
                 if (done) {
-                    //v.clearFocus(); //todo:this doesnt work as expected, it trasfers the focus
+
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.RESULT_HIDDEN);
-                    //hideSoftKeyboard();
-                    Children children = new Children(childName, childDOB);
-                    Plan plan = new Plan(planName);
-
-                    //Update edit text fields to not be visible and text view visible
-                   /* mPlanName.setVisibility(View.GONE);
-                    mChildName.setVisibility(View.GONE);
-                    mChildDOB.setVisibility(View.GONE);
-
-                    tvPlanName.setVisibility(View.VISIBLE);
-                    tvChildName.setVisibility(View.VISIBLE);
-                    tvChildDOB.setVisibility(View.VISIBLE);*/
-
-                    //Update DB with values
-                    mDatabaseReference = mfirebaseDatabase.getReference().child("User/Plan");
-                    mDatabaseReference.setValue(plan);
-                    mDatabaseReference = mfirebaseDatabase.getReference().child("User/Children");
-                    mDatabaseReference.setValue(children);
-
-                    //attach db child listener
-                    //dbChildEventListener();
                 }
 
                 return done;
@@ -246,6 +253,10 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
                     Plan plan = dataSnapshot.getValue(Plan.class);
                     tvPlanName.setText(plan.getPlanName());
                     //tvChildDOB.setText(children.getChildDOB());
+                }
+                if(dataSnapshot.getKey().equals("UnderSchoolAgeScheduleWeekend")) {
+                    //TODO: Set questions visible, and set weekend frequency, dropoff and pick up times
+
                 }
             }
 
@@ -282,21 +293,78 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         // On selecting a spinner item
         String item = parent.getItemAtPosition(position).toString();
 
-        // Showing selected spinner item
+        switch (parent.getId()) {
+            case spinner_weekday_options:
+                weekdayFrequency = item;
+                break;
+            case spinner_weekend_options:
+                weekendFrequency = item;
+                break;
+        }
+        // Showing selected spinner item/ add spinner selection
+        // to DB
         //Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
     }
 
     public void onNothingSelected(AdapterView<?> arg0) {
-        // TODO Auto-generated method stub
+        // when nothing is selected do nothing. Empty on purpose.
     }
 
     public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new TimePickerFragment();
+        //DialogFragment newFragment = new TimePickerFragment();
+        TimePickerFragment newFragment = new TimePickerFragment();
         newFragment.show(getSupportFragmentManager(), "timePicker");
+
+        switch (v.getId()) {
+            case button_drop_off:
+                newFragment.setTvText(tvweekendDropOffTimeText);
+                //weekendDropOffTime = tvweekendDropOffTimeText.getText().toString();
+                break;
+            case button_pick_up:
+                newFragment.setTvText(tvweekendPickUpTimeText);
+                //weekdayDropOffTime = time;
+                break;
+            case button_drop_off_weekday:
+                newFragment.setTvText(tvweekdayDropOffTimeText);
+                //weekdayDropOffTime = time;
+                break;
+            case button_pick_up_weekday:
+                newFragment.setTvText(tvweekdayPickUpTimeText);
+                //weekdayPickUpTime = time;
+                break;
+        }
     }
 
+    public void onNextButtonClicked(View v) {
+
+        //Set values to views
+        weekendDropOffTime = tvweekendDropOffTimeText.getText().toString();
+        weekendPickUpTime = tvweekendPickUpTimeText.getText().toString();
+
+        //TODO: Call all DB transactions here. Figure out save state in case app closes local save
+        Children children = new Children(childName, childDOB);
+        Plan plan = new Plan(planName);
+        //UnderSchoolAgeScheduleWeekday underSchoolAgeScheduleWeekday = new UnderSchoolAgeScheduleWeekday();
+        UnderSchoolAgeScheduleWeekend underSchoolAgeScheduleWeekend = new UnderSchoolAgeScheduleWeekend(weekendFrequency,weekendPickUpTime, weekendDropOffTime);
+        //can restore the data. WHen next is clicked all transactions are pushed to db.
+        //Call to save Plan name
+        mDatabaseReference = mfirebaseDatabase.getReference().child("User/Plan");
+        mDatabaseReference.setValue(plan);
+
+        //Call to save child info
+        mDatabaseReference = mfirebaseDatabase.getReference().child("User/Children");
+        mDatabaseReference.setValue(children);
+
+        //Call to save Under age weekend schedule
+        mDatabaseReference = mfirebaseDatabase.getReference().child("User/UnderSchoolAgeScheduleWeekend");
+        mDatabaseReference.setValue(underSchoolAgeScheduleWeekend);
+
+        //Call to save under age weekday schedule
+        //mDatabaseReference = mfirebaseDatabase.getReference().child("User/UnderSchoolAgeScheduleWeekday");
+        //mDatabaseReference.setValue(underSchoolAgeScheduleWeekday);
+    }
     public void bottomNavigationViewListener() {
-        //TODO: get the cases to call different Activity (pages)
+
         final Context context = this;
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
@@ -330,22 +398,21 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
 
         boolean checked = ((RadioButton) view).isChecked();
 
-        LinearLayout llUnderSchoolAge = (LinearLayout) findViewById(R.id.layout_q_same_schedule);
+        /*LinearLayout llUnderSchoolAge = (LinearLayout) findViewById(R.id.layout_q_same_schedule);
         LinearLayout llSameSchedule1 = (LinearLayout) findViewById(R.id.layout_weekend_schedule);
         LinearLayout llSameSchedule2 = (LinearLayout) findViewById(R.id.layout_weekday_schedule);
         LinearLayout llWeekdaySelection = (LinearLayout) findViewById(R.id.layout_weekday_selection);
         LinearLayout llTimePicker1 = (LinearLayout) findViewById(R.id.layout_weekend_time_picker);
         LinearLayout llTimePicker2 = (LinearLayout) findViewById(R.id.layout_weekday_time_picker);
 
-        Button buttonNext = (Button) findViewById(R.id.button_first_page);
+        Button buttonNext = (Button) findViewById(R.id.button_first_page);*/
 
         //Check which radio button was clicked
         switch (view.getId()) {
             case R.id.yes_radio_button:
                 if (checked) {
-                    //Make under school age schedule visible
+                    //Make use school schedule  Q visible
                     llUnderSchoolAge.setVisibility(View.VISIBLE);
-                    //TODO: Call DB
                     //Show next button
                     buttonNext.setVisibility(View.GONE);
                 }
@@ -386,7 +453,7 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
                     llSameSchedule2.setVisibility(View.VISIBLE);
                     llWeekdaySelection.setVisibility(View.VISIBLE);
                     llTimePicker2.setVisibility(View.VISIBLE);
-                    //TODO: add DB call
+
                     //Show next button
                     buttonNext.setVisibility(View.VISIBLE);
                 }
