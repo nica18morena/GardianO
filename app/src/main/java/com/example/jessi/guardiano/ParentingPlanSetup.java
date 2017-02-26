@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.DialogFragment;
@@ -51,29 +52,29 @@ import static com.example.jessi.guardiano.R.id.spinner_weekday_options;
 import static com.example.jessi.guardiano.R.id.spinner_weekend_options;
 import static com.example.jessi.guardiano.R.id.text_child_DOB;
 import static com.example.jessi.guardiano.R.id.text_child_name;
+import static com.example.jessi.guardiano.R.id.yes_radio_button;
+import static java.security.AccessController.doPrivilegedWithCombiner;
 import static java.security.AccessController.getContext;
 
 //TODO: code clean up
 public class ParentingPlanSetup extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private TextView tvweekendDropOffTimeText, tvweekendPickUpTimeText,
-                     tvweekdayDropOffTimeText, tvweekdayPickUpTimeText;
+    private TextView tvweekendDropOffTimeText, tvweekendPickUpTimeText, tvweekdayDropOffTimeText, tvweekdayPickUpTimeText;
     private TextView tvPlanName, tvChildName, tvChildDOB;
     private EditText mPlanName, mChildName, mChildDOB;
-    private Spinner sweekendFrequency, sweekdayFrequency;
+    private Spinner sweekendFrequency, sweekdayFrequency, spinnerWeekend, spinnerWeekday;
     private TimePicker timePicker;
     private Button weekendDropoffTimeButton, weekendPickUpTimeButton, buttonNext;
     private int hour, minute;
     private String planName, planStart, childName, childDOB, weekendFrequency, weekdayFrequency;
-    private String weekendDropOffTime, weekendPickUpTime,
-            weekdayDropOffTime, weekdayPickUpTime;
+    private String weekendDropOffTime, weekendPickUpTime, weekdayDropOffTime, weekdayPickUpTime;
     static final int TIME_DIALOG_ID = 999;
 
     private FirebaseDatabase mfirebaseDatabase;
     private DatabaseReference mDatabaseReferenceP, mDatabaseReferenceC, mDatabaseReference;
     private ChildEventListener mChildEventListenerP, mChildEventListenerC, mChildEventListener;
     private LinearLayout llUnderSchoolAge, llSameSchedule1, llSameSchedule2, llWeekdaySelection, llTimePicker1, llTimePicker2 ;
-
+    private RadioButton yesRadioButton, yesRadioButton2, noRadioButton, noRadioButton2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +100,19 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         //initiate buttons
         buttonNext = (Button) findViewById(R.id.button_first_page);
 
+        //Initialize RadioButtons
+        yesRadioButton = (RadioButton) findViewById(R.id.yes_radio_button);
+        yesRadioButton2 = (RadioButton) findViewById(R.id.yes2_radio_button);
+        noRadioButton = (RadioButton) findViewById(R.id.no_radio_button);
+        noRadioButton2 = (RadioButton) findViewById(R.id.no2_radio_button);
+
+        // Spinner element
+        spinnerWeekend = (Spinner) findViewById(R.id.spinner_weekend_options);
+        this.initializeSpinner(spinnerWeekend);
+
+        spinnerWeekday = (Spinner) findViewById(R.id.spinner_weekday_options);
+        this.initializeSpinner(spinnerWeekday);
+
         //Database access
         mfirebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = mfirebaseDatabase.getReference();
@@ -117,13 +131,6 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         this.editorActionListener(mChildName);
         mChildDOB = (EditText) findViewById(R.id.text_child_DOB);
         this.editorActionListener(mChildDOB);
-
-        // Spinner element
-        Spinner spinnerWeekend = (Spinner) findViewById(R.id.spinner_weekend_options);
-        this.initializeSpinner(spinnerWeekend);
-
-        Spinner spinnerWeekday = (Spinner) findViewById(R.id.spinner_weekday_options);
-        this.initializeSpinner(spinnerWeekday);
 
         //call bottom navigation
         this.bottomNavigationViewListener();
@@ -255,9 +262,22 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
                     //tvChildDOB.setText(children.getChildDOB());
                 }
                 if(dataSnapshot.getKey().equals("UnderSchoolAgeScheduleWeekend")) {
-                    //TODO: Set questions visible, and set weekend frequency, dropoff and pick up times
+                    yesRadioButton.setChecked(true);
+                    noRadioButton.setChecked(false);
+                    llUnderSchoolAge.setVisibility(View.VISIBLE);
+                    yesRadioButton2.setChecked(false);
+                    noRadioButton2.setChecked(true);
+                    llSameSchedule1.setVisibility(View.VISIBLE);
+                    llTimePicker1.setVisibility(View.VISIBLE);
 
+                    UnderSchoolAgeScheduleWeekend underSchoolAgeScheduleWeekend = dataSnapshot.getValue(UnderSchoolAgeScheduleWeekend.class);
+                    int selection = getSpinnerValueIndex(spinnerWeekend, underSchoolAgeScheduleWeekend.getFrequency());
+
+                    spinnerWeekend.setSelection(selection);
+                    tvweekendDropOffTimeText.setText(underSchoolAgeScheduleWeekend.getDropOffTime());
+                    tvweekendPickUpTimeText.setText(underSchoolAgeScheduleWeekend.getPickUpTime());
                 }
+                //TODO: Set questions visible, and set weekday frequency, dropoff and pick up times
             }
 
             @Override
@@ -282,6 +302,17 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         };
         mDatabaseReference = mfirebaseDatabase.getReference().child("User");
         mDatabaseReference.addChildEventListener(mChildEventListener);
+    }
+
+    private int getSpinnerValueIndex(Spinner spinner, String value) {
+        int index = 0;
+        for (int i = 0; i < spinner.getCount(); i++){
+            if (spinner.getItemAtPosition(i).equals(value)){
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
     private void hideSoftKeyboard(){
@@ -397,15 +428,6 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
     public void onRadioButtonClicked(View view) {
 
         boolean checked = ((RadioButton) view).isChecked();
-
-        /*LinearLayout llUnderSchoolAge = (LinearLayout) findViewById(R.id.layout_q_same_schedule);
-        LinearLayout llSameSchedule1 = (LinearLayout) findViewById(R.id.layout_weekend_schedule);
-        LinearLayout llSameSchedule2 = (LinearLayout) findViewById(R.id.layout_weekday_schedule);
-        LinearLayout llWeekdaySelection = (LinearLayout) findViewById(R.id.layout_weekday_selection);
-        LinearLayout llTimePicker1 = (LinearLayout) findViewById(R.id.layout_weekend_time_picker);
-        LinearLayout llTimePicker2 = (LinearLayout) findViewById(R.id.layout_weekday_time_picker);
-
-        Button buttonNext = (Button) findViewById(R.id.button_first_page);*/
 
         //Check which radio button was clicked
         switch (view.getId()) {
