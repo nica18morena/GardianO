@@ -47,6 +47,12 @@ public class CalendarAccess {
     private static final String FIFTH_WEEK_OF_MONTH = "Fifth week of mos";
     private static final String NONE = "None";
 
+    private static final String FIRST_WEEKND_OF_MONTH = "First wknd of mos";
+    private static final String SECOND_WEEKND_OF_MONTH = "Second wknd of mos";
+    private static final String THIRD_WEEKND_OF_MONTH = "Third wknd of mos";
+    private static final String FOURTH_WEEKND_OF_MONTH = "Fourth wknd of mos";
+    private static final String FIFTH_WEEKND_OF_MONTH = "Fifth wknd of mos";
+
    public CalendarAccess(Context ctx){
    //public CalendarAccess(){
         PROJECTION_ID_INDEX = 0;
@@ -271,7 +277,53 @@ public class CalendarAccess {
         freq = freq + "BYHOUR=" + dropHr + ";";
         freq = freq + "BYMINUTE=" + dropOff.get("Min");*/
     }
-    public static void addUnderSchoolAgeScheduleWeekend(){
+    public long createUnderSchoolAgeScheduleWeekend(String _weekendFrequency, String _weekendPickUpTime, String _weekendDropOffTime){
+
+        String freq = "FREQ=";
+        String num = "";
+        switch (_weekendFrequency){
+            case EVERY:
+                freq = freq + "WEEKLY;WKST=SU;";
+                break;
+            case EVERY_OTHER:
+                freq = freq + "WEEKLY;INTERVAL=2;WKST=SU;";
+                break;
+            case FIRST_WEEKND_OF_MONTH:
+                freq = freq + "MONTHLY;WKST=SU;";
+                num = "1";
+                break;
+            case SECOND_WEEKND_OF_MONTH:
+                freq = freq + "MONTHLY;WKST=SU;";
+                num = "2";
+                break;
+            case THIRD_WEEKND_OF_MONTH:
+                freq = freq + "MONTHLY;WKST=SU;";
+                num = "3";
+                break;
+            case FOURTH_WEEKND_OF_MONTH:
+                freq = freq + "MONTHLY;WKST=SU;";
+                num = "4";
+                break;
+            case FIFTH_WEEKND_OF_MONTH:
+                freq = freq + "MONTHLY;WKST=SU;";
+                num = "-1";
+                break;
+            /*case NONE:
+                freq = "";
+                //TODO: Special case... should exit whole method
+                break;*/
+        }
+        // Get weekdays
+        freq = freq + "BYDAY=";
+
+        if(!num.isEmpty()){
+            freq = freq + num + "SA," + num + "SU";
+        }
+        else{
+            freq = freq + "SA,SU";
+        }
+
+        return this.setEvent(freq);
 
     }
 

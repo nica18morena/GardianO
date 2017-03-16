@@ -78,7 +78,7 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
     private TimePicker timePicker;
     private Button weekendDropoffTimeButton, weekendPickUpTimeButton, buttonNext;
     private int hour, minute;
-    private long CAL_ID, USAWeekdayEventId;
+    private long CAL_ID, USAWeekdayEventId, USAWeekendEventId;
     private String planName, planStart, childName, childDOB, weekendFrequency, weekdayFrequency;
     private String weekendDropOffTime, weekendPickUpTime, weekdayDropOffTime, weekdayPickUpTime;
     static final int TIME_DIALOG_ID = 999;
@@ -500,6 +500,7 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
 
         USAWeekdayEventId = calendarAccess.createUnderSchoolAgeScheduleWeekday(weekdayFrequency,mon, tues, wed, thur, fri, weekdayPickUpTime, weekdayDropOffTime);
         UnderSchoolAgeScheduleWeekday underSchoolAgeScheduleWeekday = new UnderSchoolAgeScheduleWeekday(weekdayFrequency,mon, tues, wed, thur, fri, weekdayPickUpTime, weekdayDropOffTime, USAWeekdayEventId);
+        USAWeekendEventId = calendarAccess.createUnderSchoolAgeScheduleWeekend(weekendFrequency,weekendPickUpTime, weekendDropOffTime);
         UnderSchoolAgeScheduleWeekend underSchoolAgeScheduleWeekend = new UnderSchoolAgeScheduleWeekend(weekendFrequency,weekendPickUpTime, weekendDropOffTime);
         //can restore the data. WHen next is clicked all transactions are pushed to db.
         //Call to save Plan name
