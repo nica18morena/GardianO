@@ -6,49 +6,49 @@ package com.example.jessi.guardiano.DataObjects;
 
 public abstract class WeekDaySchedule extends Schedule {
 
-    private String monday;
-    private String tuesday;
-    private String wednesday;
-    private String thursday;
-    private String friday;
+    private boolean monday;
+    private boolean tuesday;
+    private boolean wednesday;
+    private boolean thursday;
+    private boolean friday;
 
-    public String getMonday() {
+    public boolean getMonday() {
         return monday;
     }
 
-    public String getTuesday() {
+    public boolean getTuesday() {
         return tuesday;
     }
 
-    public String getWednesday() {
+    public boolean getWednesday() {
         return wednesday;
     }
 
-    public String getThursday() {
+    public boolean getThursday() {
         return thursday;
     }
 
-    public String getFriday() {
+    public boolean getFriday() {
         return friday;
     }
 
-    public void setMonday(String m) {
+    public void setMonday(boolean m) {
         this.monday = m;
     }
 
-    public void setTuesday(String t) {
+    public void setTuesday(boolean t) {
         this.tuesday = t;
     }
 
-    public void setWednesday(String w) {
+    public void setWednesday(boolean w) {
         this.wednesday = w;
     }
 
-    public void setThursday(String th) {
+    public void setThursday(boolean th) {
         this.thursday = th;
     }
 
-    public void setFriday(String f) {
+    public void setFriday(boolean f) {
         this.friday = f;
     }
 }

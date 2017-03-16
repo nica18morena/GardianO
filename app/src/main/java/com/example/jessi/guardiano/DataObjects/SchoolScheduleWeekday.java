@@ -9,8 +9,8 @@ public class SchoolScheduleWeekday extends WeekDaySchedule {
     public SchoolScheduleWeekday(){
 
     }
-    public SchoolScheduleWeekday(String fq, String m, String t, String w,
-                                 String th, String f, String put, String dot){
+    public SchoolScheduleWeekday(String fq, boolean m, boolean t, boolean w,
+                                 boolean th, boolean f, String put, String dot){
 
         this.setFrequency(fq);
         this.setMonday(m);

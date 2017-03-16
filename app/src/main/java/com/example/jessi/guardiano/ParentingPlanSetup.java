@@ -4,16 +4,20 @@ package com.example.jessi.guardiano;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Dialog;
-import android.app.TimePickerDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.provider.MediaStore;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.os.AsyncTask;
+import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.DialogFragment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,17 +26,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
+import com.example.jessi.guardiano.CalendarAccess.CalendarAccess;
 import com.example.jessi.guardiano.DataObjects.Children;
 import com.example.jessi.guardiano.DataObjects.Plan;
 import com.example.jessi.guardiano.DataObjects.UnderSchoolAgeScheduleWeekday;
@@ -47,18 +50,27 @@ import static com.example.jessi.guardiano.R.id.button_drop_off;
 import static com.example.jessi.guardiano.R.id.button_drop_off_weekday;
 import static com.example.jessi.guardiano.R.id.button_pick_up;
 import static com.example.jessi.guardiano.R.id.button_pick_up_weekday;
+import static com.example.jessi.guardiano.R.id.checkbox_Friday;
+import static com.example.jessi.guardiano.R.id.checkbox_Monaday;
+import static com.example.jessi.guardiano.R.id.checkbox_Thursday;
+import static com.example.jessi.guardiano.R.id.checkbox_Tuesday;
+import static com.example.jessi.guardiano.R.id.checkbox_Wednesday;
 import static com.example.jessi.guardiano.R.id.editPlanName;
 import static com.example.jessi.guardiano.R.id.spinner_weekday_options;
 import static com.example.jessi.guardiano.R.id.spinner_weekend_options;
 import static com.example.jessi.guardiano.R.id.text_child_DOB;
 import static com.example.jessi.guardiano.R.id.text_child_name;
-import static com.example.jessi.guardiano.R.id.yes_radio_button;
 import static java.security.AccessController.doPrivilegedWithCombiner;
-import static java.security.AccessController.getContext;
 
 //TODO: code clean up
 public class ParentingPlanSetup extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    private final String PLAN_NAME = "PARENTINGPLANNAME";
+    private final String CHILD_NAME = "CHILDNAME";    private final String CHILD_DOB = "CHILDDOB";
+
+    private static final String TAG = "ParentingPlanSetup";
+    private static final String WRITE_CALENDAR = "android.permission.WRITE_CALENDAR";
+    private static final int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR = 1;
     private TextView tvweekendDropOffTimeText, tvweekendPickUpTimeText, tvweekdayDropOffTimeText, tvweekdayPickUpTimeText;
     private TextView tvPlanName, tvChildName, tvChildDOB;
     private EditText mPlanName, mChildName, mChildDOB;
@@ -66,15 +78,18 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
     private TimePicker timePicker;
     private Button weekendDropoffTimeButton, weekendPickUpTimeButton, buttonNext;
     private int hour, minute;
+    private long CAL_ID;
     private String planName, planStart, childName, childDOB, weekendFrequency, weekdayFrequency;
     private String weekendDropOffTime, weekendPickUpTime, weekdayDropOffTime, weekdayPickUpTime;
     static final int TIME_DIALOG_ID = 999;
-
+    private CheckBox cbmonday, cbtuesday, cbwednesday, cbthursday, cbfriday;
+    private boolean mon, tues, wed, thur, fri;
     private FirebaseDatabase mfirebaseDatabase;
     private DatabaseReference mDatabaseReferenceP, mDatabaseReferenceC, mDatabaseReference;
     private ChildEventListener mChildEventListenerP, mChildEventListenerC, mChildEventListener;
     private LinearLayout llUnderSchoolAge, llSameSchedule1, llSameSchedule2, llWeekdaySelection, llTimePicker1, llTimePicker2 ;
     private RadioButton yesRadioButton, yesRadioButton2, noRadioButton, noRadioButton2;
+    private CalendarAccess calendarAccess;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +121,16 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         noRadioButton = (RadioButton) findViewById(R.id.no_radio_button);
         noRadioButton2 = (RadioButton) findViewById(R.id.no2_radio_button);
 
+        //Initialize weekday checkboxes
+        cbmonday = (CheckBox) findViewById(R.id.checkbox_Monaday);
+        cbtuesday = (CheckBox) findViewById(R.id.checkbox_Tuesday);
+        cbwednesday = (CheckBox) findViewById(R.id.checkbox_Wednesday);
+        cbthursday = (CheckBox) findViewById(R.id.checkbox_Thursday);
+        cbfriday = (CheckBox) findViewById(R.id.checkbox_Friday);
+        /*if(savedInstanceState != null){
+            planName = savedInstanceState.getString(PLAN_NAME);
+            tvPlanName.setText(planName);
+        }*/
         // Spinner element
         spinnerWeekend = (Spinner) findViewById(R.id.spinner_weekend_options);
         this.initializeSpinner(spinnerWeekend);
@@ -120,11 +145,16 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         //attach db child listener
         dbChildEventListener();
 
+        //Calendar instance
+        Context context = this;
+        calendarAccess = new CalendarAccess(context);
+        //TODO: Find a place to check if calendar exists.
+        //calendarAccess.createCalendar();
+
         //Read and save text inputs
         mPlanName = (EditText) findViewById(R.id.editPlanName);
         this.editorActionListener(mPlanName);
 
-        //TODO: Add planStart as input
         //EditText mPlanStart = (EditText) findViewById(R.id.editPlanStart);
         //planStart = mPlanName.getText().toString();
         mChildName = (EditText) findViewById(R.id.text_child_name);
@@ -134,8 +164,71 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
 
         //call bottom navigation
         this.bottomNavigationViewListener();
-    }
 
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,WRITE_CALENDAR)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    WRITE_CALENDAR)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,new String[]{WRITE_CALENDAR},
+                        MY_PERMISSIONS_REQUEST_WRITE_CALENDAR);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+
+        new InsertParentingSchedule().execute();
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_WRITE_CALENDAR: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // calendar-related task you need to do.
+                    new InsertParentingSchedule().execute();
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(PLAN_NAME, planName);
+    }
+    @Override
+    public void onRestoreInstanceState(Bundle savedState){
+        super.onRestoreInstanceState(savedState);
+        //tvPlanName = savedState.getString("tvplanName");
+        planName = savedState.getString(PLAN_NAME);
+        mPlanName = (EditText)findViewById(R.id.editPlanName);
+        mPlanName.setText(planName);
+    }
     private void initializeSpinner(Spinner s) {
 
         List<String> categories = new ArrayList<String>();
@@ -259,6 +352,7 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
 
                     Plan plan = dataSnapshot.getValue(Plan.class);
                     tvPlanName.setText(plan.getPlanName());
+                    CAL_ID = plan.getPlanCalendar();
                     //tvChildDOB.setText(children.getChildDOB());
                 }
                 if(dataSnapshot.getKey().equals("UnderSchoolAgeScheduleWeekend")) {
@@ -278,6 +372,25 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
                     tvweekendPickUpTimeText.setText(underSchoolAgeScheduleWeekend.getPickUpTime());
                 }
                 //TODO: Set questions visible, and set weekday frequency, dropoff and pick up times
+                if(dataSnapshot.getKey().equals("UnderSchoolAgeScheduleWeekday")) {
+                    llSameSchedule2.setVisibility(View.VISIBLE);
+                    llWeekdaySelection.setVisibility(View.VISIBLE);
+                    llTimePicker2.setVisibility(View.VISIBLE);
+                    buttonNext.setVisibility(View.VISIBLE);
+
+                    UnderSchoolAgeScheduleWeekday underSchoolAgeScheduleWeekday = dataSnapshot.getValue(UnderSchoolAgeScheduleWeekday.class);
+                    int selection = getSpinnerValueIndex(spinnerWeekday, underSchoolAgeScheduleWeekday.getFrequency());
+
+                    spinnerWeekday.setSelection(selection);
+                    cbmonday.setChecked(underSchoolAgeScheduleWeekday.getMonday());
+                    cbtuesday.setChecked(underSchoolAgeScheduleWeekday.getTuesday());
+                    cbwednesday.setChecked(underSchoolAgeScheduleWeekday.getWednesday());
+                    cbthursday.setChecked(underSchoolAgeScheduleWeekday.getThursday());
+                    cbfriday.setChecked(underSchoolAgeScheduleWeekday.getFriday());
+                    tvweekdayDropOffTimeText.setText(underSchoolAgeScheduleWeekday.getDropOffTime());
+                    tvweekdayPickUpTimeText.setText(underSchoolAgeScheduleWeekday.getPickUpTime());
+
+                }
             }
 
             @Override
@@ -371,11 +484,19 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         //Set values to views
         weekendDropOffTime = tvweekendDropOffTimeText.getText().toString();
         weekendPickUpTime = tvweekendPickUpTimeText.getText().toString();
+        weekdayDropOffTime = tvweekdayDropOffTimeText.getText().toString();
+        weekdayPickUpTime = tvweekdayPickUpTimeText.getText().toString();
+
+        //Create a calendar if no ID exists
+        if(CAL_ID == 0){
+
+            CAL_ID = calendarAccess.createCalendar();
+        }
 
         //TODO: Call all DB transactions here. Figure out save state in case app closes local save
         Children children = new Children(childName, childDOB);
-        Plan plan = new Plan(planName);
-        //UnderSchoolAgeScheduleWeekday underSchoolAgeScheduleWeekday = new UnderSchoolAgeScheduleWeekday();
+        Plan plan = new Plan(planName, CAL_ID);
+        UnderSchoolAgeScheduleWeekday underSchoolAgeScheduleWeekday = new UnderSchoolAgeScheduleWeekday(weekdayFrequency,mon, tues, wed, thur, fri, weekdayPickUpTime, weekdayDropOffTime);
         UnderSchoolAgeScheduleWeekend underSchoolAgeScheduleWeekend = new UnderSchoolAgeScheduleWeekend(weekendFrequency,weekendPickUpTime, weekendDropOffTime);
         //can restore the data. WHen next is clicked all transactions are pushed to db.
         //Call to save Plan name
@@ -391,8 +512,8 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         mDatabaseReference.setValue(underSchoolAgeScheduleWeekend);
 
         //Call to save under age weekday schedule
-        //mDatabaseReference = mfirebaseDatabase.getReference().child("User/UnderSchoolAgeScheduleWeekday");
-        //mDatabaseReference.setValue(underSchoolAgeScheduleWeekday);
+        mDatabaseReference = mfirebaseDatabase.getReference().child("User/UnderSchoolAgeScheduleWeekday");
+        mDatabaseReference.setValue(underSchoolAgeScheduleWeekday);
     }
     public void bottomNavigationViewListener() {
 
@@ -408,7 +529,7 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.action_calendar:
-                                Intent intent1 = new Intent(context, Calendar.class);
+                                Intent intent1 = new Intent(context, ParentingPlanCalendar.class);
                                 startActivity(intent1);
                                 break;
                             case R.id.action_plan:
@@ -484,10 +605,80 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
 
     }
 
+    public void onWeekdayCheckboxClicked(View view) {
+        boolean checked = ((CheckBox) view).isChecked();
+
+        //Check which checkbox was clicked
+        switch (view.getId()) {
+            case checkbox_Monaday:
+                mon = checked;
+                break;
+            case checkbox_Tuesday:
+                tues = checked;
+                break;
+            case checkbox_Wednesday:
+                wed = checked;
+                break;
+            case checkbox_Thursday:
+                thur = checked;
+                break;
+            case checkbox_Friday:
+                fri= checked;
+                break;
+        }
+    }
     public void addImageButtonClicked(View view) {
 
         //ImageButton ibAdd = (ImageButton) this.findViewById(R.id.image_button_add_remove);
 
 
+    }
+    public class InsertParentingSchedule extends AsyncTask<Void, Void, Cursor> {
+        @Override
+        protected Cursor doInBackground(Void... params) {
+           /* //Get the content resolver
+            ContentResolver resolver = getContentResolver();
+            if(checkPermission("android.permission.WRITE_CALENDAR",android.os.Process.myPid(), android.os.Process.myUid())
+            {
+                Cursor cursor = resolver.bulkInsert(CalendarContract.CONTENT_URI, );
+
+            }*/
+            Cursor calCursor;
+            String[] projection =
+                    new String[]{
+                            CalendarContract.Calendars._ID,
+                            CalendarContract.Calendars.NAME,
+                            CalendarContract.Calendars.ACCOUNT_NAME,
+                            CalendarContract.Calendars.ACCOUNT_TYPE};
+            try {
+                calCursor = getContentResolver().query(CalendarContract.Calendars.CONTENT_URI,
+                        projection,
+                        CalendarContract.Calendars.VISIBLE + " = 1",
+                        null,
+                        CalendarContract.Calendars._ID + " ASC");
+                if (calCursor.moveToFirst()) {
+                    do {
+                        long id = calCursor.getLong(0);
+                        String displayName = calCursor.getString(1);
+                        Log.i(TAG, "Calendar names: " + displayName + "," + id);
+                    } while (calCursor.moveToNext());
+                }
+            }
+            catch (SecurityException e){
+                Log.e(TAG, "Error occured: " + e.getStackTrace());
+               return null;
+            }
+
+            return calCursor;
+        }
+        // Invoked on UI thread
+        @Override
+        protected void onPostExecute(Cursor cursor) {
+            super.onPostExecute(cursor);
+
+           if(cursor == null){
+               Toast.makeText(getApplicationContext(),"Permission to calendar needed", Toast.LENGTH_SHORT).show();
+           }
+        }
     }
 }

@@ -230,7 +230,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="showTimePickerDialog"
-                    android:text="@string/drop_off_fragment" />
+                    android:text="@string/drop_off_fragment"
+                    android:textSize="12sp"/>
 
                 <TextView
                     android:id="@+id/text_pick_up"
@@ -243,7 +244,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="showTimePickerDialog"
-                    android:text="@string/pick_up_fragment" />
+                    android:text="@string/pick_up_fragment"
+                    android:textSize="12sp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -278,35 +280,40 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Monday"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:onClick="onWeekdayCheckboxClicked"/>
 
                 <CheckBox
                     android:id="@+id/checkbox_Tuesday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Tuesday"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:onClick="onWeekdayCheckboxClicked"/>
 
                 <CheckBox
                     android:id="@+id/checkbox_Wednesday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Wednesday"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:onClick="onWeekdayCheckboxClicked"/>
 
                 <CheckBox
                     android:id="@+id/checkbox_Thursday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Thursday"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:onClick="onWeekdayCheckboxClicked"/>
 
                 <CheckBox
                     android:id="@+id/checkbox_Friday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Friday"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:onClick="onWeekdayCheckboxClicked"/>
             </LinearLayout>
 
             <LinearLayout
@@ -327,7 +334,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="showTimePickerDialog"
-                    android:text="@string/drop_off_fragment" />
+                    android:text="@string/drop_off_fragment"
+                    android:textSize="12sp"/>
 
                 <TextView
                     android:id="@+id/text_pick_up_weekday"
@@ -340,16 +348,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="showTimePickerDialog"
-                    android:text="@string/pick_up_fragment" />
+                    android:text="@string/pick_up_fragment"
+                    android:textSize="12sp"/>
             </LinearLayout>
 
-            <Button
+           <Button
                 android:id="@+id/button_first_page"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/layout_weekday_time_picker"
                 android:text="@string/next"
+                android:textSize="12sp"
                 android:visibility="gone"
                 android:onClick="onNextButtonClicked"/>
 

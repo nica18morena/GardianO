@@ -10,8 +10,8 @@ public class UnderSchoolAgeScheduleWeekday extends WeekDaySchedule {
 
     }
 
-    public UnderSchoolAgeScheduleWeekday(String fq, String m, String t, String w,
-                                 String th, String f, String put, String dot){
+    public UnderSchoolAgeScheduleWeekday(String fq, boolean m, boolean t, boolean w,
+                                         boolean th, boolean f, String put, String dot){
 
         this.setFrequency(fq);
         this.setMonday(m);
