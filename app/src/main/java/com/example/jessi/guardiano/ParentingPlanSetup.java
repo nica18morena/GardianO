@@ -78,7 +78,7 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
     private TimePicker timePicker;
     private Button weekendDropoffTimeButton, weekendPickUpTimeButton, buttonNext;
     private int hour, minute;
-    private long CAL_ID;
+    private long CAL_ID, USAWeekdayEventId;
     private String planName, planStart, childName, childDOB, weekendFrequency, weekdayFrequency;
     private String weekendDropOffTime, weekendPickUpTime, weekdayDropOffTime, weekdayPickUpTime;
     static final int TIME_DIALOG_ID = 999;
@@ -491,12 +491,15 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         if(CAL_ID == 0){
 
             CAL_ID = calendarAccess.createCalendar();
+            calendarAccess.setCalId(CAL_ID);
         }
 
         //TODO: Call all DB transactions here. Figure out save state in case app closes local save
         Children children = new Children(childName, childDOB);
         Plan plan = new Plan(planName, CAL_ID);
-        UnderSchoolAgeScheduleWeekday underSchoolAgeScheduleWeekday = new UnderSchoolAgeScheduleWeekday(weekdayFrequency,mon, tues, wed, thur, fri, weekdayPickUpTime, weekdayDropOffTime);
+
+        USAWeekdayEventId = calendarAccess.createUnderSchoolAgeScheduleWeekday(weekdayFrequency,mon, tues, wed, thur, fri, weekdayPickUpTime, weekdayDropOffTime);
+        UnderSchoolAgeScheduleWeekday underSchoolAgeScheduleWeekday = new UnderSchoolAgeScheduleWeekday(weekdayFrequency,mon, tues, wed, thur, fri, weekdayPickUpTime, weekdayDropOffTime, USAWeekdayEventId);
         UnderSchoolAgeScheduleWeekend underSchoolAgeScheduleWeekend = new UnderSchoolAgeScheduleWeekend(weekendFrequency,weekendPickUpTime, weekendDropOffTime);
         //can restore the data. WHen next is clicked all transactions are pushed to db.
         //Call to save Plan name
@@ -514,6 +517,7 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         //Call to save under age weekday schedule
         mDatabaseReference = mfirebaseDatabase.getReference().child("User/UnderSchoolAgeScheduleWeekday");
         mDatabaseReference.setValue(underSchoolAgeScheduleWeekday);
+
     }
     public void bottomNavigationViewListener() {
 

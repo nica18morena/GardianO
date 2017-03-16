@@ -12,6 +12,8 @@ import com.example.jessi.guardiano.DataObjects.UnderSchoolAgeScheduleWeekday;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 import static android.R.attr.description;
@@ -31,10 +33,19 @@ public class CalendarAccess {
     private static String ACCOUNT_NAME = null;
     private static String CALENDAR_NAME = null;
     private static long CAL_ID;
+    private static long eventID;
     /**The main/basic URI for the android events table*/
     private static Uri EVENT_URI = null;
     private static CalendarAccess mInstance = null;
     private static ContentResolver contentResolver;
+    private static final String EVERY = "Every";
+    private static final String EVERY_OTHER = "Every other";
+    private static final String FIRST_WEEK_OF_MONTH = "First week of mos";
+    private static final String SECOND_WEEK_OF_MONTH = "Second week of mos";
+    private static final String THIRD_WEEK_OF_MONTH = "Third week of mos";
+    private static final String FOURTH_WEEK_OF_MONTH = "Fourth week of mos";
+    private static final String FIFTH_WEEK_OF_MONTH = "Fifth week of mos";
+    private static final String NONE = "None";
 
    public CalendarAccess(Context ctx){
    //public CalendarAccess(){
@@ -110,13 +121,18 @@ public class CalendarAccess {
         //setEvent();
         return CAL_ID;
     }
+    public void setCalId(long _calId){
+        CAL_ID = _calId;
+    }
 
-    public void setEvent(){
-        if (CAL_ID == -1){
-            return;
-        }
+    public void setEventId(long _eventId){
+        eventID = _eventId;
+    }
 
-        Calendar calendar = new GregorianCalendar(2017, 3, 14);
+    public long setEvent(String _freq){
+
+        //Calendar calendar = new GregorianCalendar(2017, 3, 14);
+        Calendar calendar = new GregorianCalendar();
         calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
         calendar.set(Calendar.HOUR, 0);
         calendar.set(Calendar.MINUTE, 0);
@@ -128,7 +144,7 @@ public class CalendarAccess {
 
         values.put(CalendarContract.Events.DTSTART, start);
         values.put(CalendarContract.Events.DTEND, start);
-        values.put(CalendarContract.Events.RRULE, "FREQ=DAILY;COUNT=20;BYDAY=MO,TU,WE,TH,FR;WKST=MO");
+        values.put(CalendarContract.Events.RRULE, _freq);
         values.put(CalendarContract.Events.TITLE, "My Time");
         values.put(CalendarContract.Events.EVENT_LOCATION, "Home");
         values.put(CalendarContract.Events.CALENDAR_ID, CAL_ID);
@@ -143,41 +159,132 @@ public class CalendarAccess {
 
         try{
             Uri uri = contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
-            long eventID = new Long(uri.getLastPathSegment());
+            eventID = new Long(uri.getLastPathSegment());
         }
         catch (SecurityException e){
             Log.e(TAG, "Error occured: " + e.getStackTrace());
         }
+
+        return eventID;
     }
-    public void addUnderSchoolAgeScheduleWeekday(//UnderSchoolAgeScheduleWeekday schedule,
-                                                        Context ctx){
-        //Get schedule information
-        /*schedule.getDropOffTime();
-        schedule.getPickUpTime();
+    public long createUnderSchoolAgeScheduleWeekday(String _weekdayFrequency, boolean _mon,
+                                                    boolean _tues, boolean _wed, boolean _thur,
+                                                    boolean _fri, String _weekdayPickUpTime,
+                                                    String _weekdayDropOffTime){
+        String freq = "FREQ=";
+        String num = "";
+        switch (_weekdayFrequency){
+            case EVERY:
+                freq = freq + "WEEKLY;WKST=SU;";
+                break;
+            case EVERY_OTHER:
+                freq = freq + "WEEKLY;INTERVAL=2;WKST=SU;";
+                break;
+            case FIRST_WEEK_OF_MONTH:
+                freq = freq + "MONTHLY;WKST=SU;";
+                num = "1";
+                break;
+            case SECOND_WEEK_OF_MONTH:
+                freq = freq + "MONTHLY;WKST=SU;";
+                num = "2";
+                break;
+            case THIRD_WEEK_OF_MONTH:
+                freq = freq + "MONTHLY;WKST=SU;";
+                num = "3";
+                break;
+            case FOURTH_WEEK_OF_MONTH:
+                freq = freq + "MONTHLY;WKST=SU;";
+                num = "4";
+                break;
+            case FIFTH_WEEK_OF_MONTH:
+                freq = freq + "MONTHLY;WKST=SU;";
+                num = "-1";
+                break;
+            /*case NONE:
+                freq = "";
+                //TODO: Special case... should exit whole method
+                break;*/
+        }
+        // Get weekdays
+        freq = freq + "BYDAY=";
 
-        schedule.getFrequency();*/
-        String recurrence = "FREQ=WEEKLY;COUNT=10;WKST=SU";
+        if(_mon){
+            if(!num.isEmpty()){
+                freq = freq + num;
+            }
+            freq = freq + "MO,";
+        }
+        if(_tues){
+            if(!num.isEmpty()){
+                freq = freq + num;
+            }
+            freq = freq + "TU,";
+        }
+        if(_wed){
+            if(!num.isEmpty()){
+                freq = freq + num;
+            }
+            freq = freq + "WE,";
+        }
+        if(_thur){
+            if(!num.isEmpty()){
+                freq = freq + num;
+            }
+            freq = freq + "TH,";
+        }
+        if(_fri){
+            if(!num.isEmpty()){
+                freq = freq + num;
+            }
+            freq = freq + "FR,";
+        }
 
-        String title = "My Time";
-        String description = "My time with kid";
-        ContentResolver cr = ctx.getContentResolver();
-        ContentValues cv = new ContentValues();
-        cv.put(CalendarContract.Events.CALENDAR_ID, CAL_ID);
-        cv.put(CalendarContract.Events.TITLE, title);
-        cv.put(CalendarContract.Events.RRULE,recurrence);
-        cv.put(CalendarContract.Events.RDATE, description);
+        freq = freq.substring(0, freq.length()-1);
 
-        //cv.put(CalendarContract.Events.DTSTART, dtstart);
-        //cv.put(CalendarContract.Events.DTEND, dtend);
-        //cv.put(CalendarContract.Events.EVENT_LOCATION, location);
-        cv.put(CalendarContract.Events.DESCRIPTION, description);
-        cv.put(CalendarContract.Events.EVENT_TIMEZONE, "America/Los_Angeles");
-        cr.insert(EVENT_URI, cv);
+        return this.setEvent(freq);
+
+        /*//Set start time and end time
+        Map dropOff = this.tokenizeTime(_weekdayDropOffTime);
+        Map pickUp = this.tokenizeTime(_weekdayPickUpTime);
+
+        String dropHr;
+        String pickHr;
+        if (dropOff.get("AM/PM") == "AM"){
+            dropHr = dropOff.get("Hr").toString();
+        }
+        else{
+            Integer hrs = Integer.parseInt(dropOff.get("Hr").toString()) + 12;
+            dropHr = hrs.toString();
+        }
+
+        freq = freq + "BYHOUR=" + dropHr + ";";
+        freq = freq + "BYMINUTE=" + dropOff.get("Min");
+
+        if (pickUp.get("AM/PM") == "AM"){
+            pickHr = pickUp.get("Hr").toString();
+        }
+        else{
+            Integer hrs = Integer.parseInt(pickUp.get("Hr").toString()) + 12;
+            pickHr = hrs.toString();
+        }
+
+        freq = freq + "BYHOUR=" + dropHr + ";";
+        freq = freq + "BYMINUTE=" + dropOff.get("Min");*/
     }
     public static void addUnderSchoolAgeScheduleWeekend(){
 
     }
 
+    private Map tokenizeTime(String _time){
+
+        String[] temp = _time.split(":|\\s");
+        Map time = new HashMap();
+        time.put("Hr", temp[0]);
+        time.put("Min", temp[1]);
+        time.put("AM/PM", temp[2]);
+
+        return time;
+    }
     /**Builds the Uri for events (as a Sync Adapter)*/
     public static Uri buildEventUri() {
         return EVENT_URI

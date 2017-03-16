@@ -11,7 +11,7 @@ public class UnderSchoolAgeScheduleWeekday extends WeekDaySchedule {
     }
 
     public UnderSchoolAgeScheduleWeekday(String fq, boolean m, boolean t, boolean w,
-                                         boolean th, boolean f, String put, String dot){
+                                         boolean th, boolean f, String put, String dot, long eId){
 
         this.setFrequency(fq);
         this.setMonday(m);
@@ -21,5 +21,6 @@ public class UnderSchoolAgeScheduleWeekday extends WeekDaySchedule {
         this.setFriday(f);
         this.setPickUpTime(put);
         this.setDropOffTime(dot);
+        this.setEventId(eId);
     }
 }
