@@ -40,6 +40,10 @@ import com.example.jessi.guardiano.DataObjects.Children;
 import com.example.jessi.guardiano.DataObjects.Plan;
 import com.example.jessi.guardiano.DataObjects.UnderSchoolAgeScheduleWeekday;
 import com.example.jessi.guardiano.DataObjects.UnderSchoolAgeScheduleWeekend;
+//import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -90,6 +94,10 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
     private LinearLayout llUnderSchoolAge, llSameSchedule1, llSameSchedule2, llWeekdaySelection, llTimePicker1, llTimePicker2 ;
     private RadioButton yesRadioButton, yesRadioButton2, noRadioButton, noRadioButton2;
     private CalendarAccess calendarAccess;
+    private static final int RC_SIGN_IN = 1;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,9 +150,11 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         mfirebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = mfirebaseDatabase.getReference();
 
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
         //attach db child listener
         dbChildEventListener();
-
+        firebaseAuthListener();
         //Calendar instance
         Context context = this;
         calendarAccess = new CalendarAccess(context);
@@ -163,7 +173,7 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         this.editorActionListener(mChildDOB);
 
         //call bottom navigation
-        this.bottomNavigationViewListener();
+        //this.bottomNavigationViewListener();
 
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(this,WRITE_CALENDAR)
@@ -191,6 +201,44 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         }
 
         new InsertParentingSchedule().execute();
+
+
+    }
+
+    private void firebaseAuthListener(){
+        mAuthStateListener = new FirebaseAuth.AuthStateListener(){
+          @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth){
+              FirebaseUser user = firebaseAuth.getCurrentUser();
+              Context context = getApplicationContext();
+
+              if (user != null) {
+                  //user is signed in
+                  Toast.makeText(context, "You're now signed in. Welcome to GuardianO", Toast.LENGTH_SHORT).show();
+                  Log.d(TAG, "onAuthStateChanged:signed_in: " + user.getUid());
+              }
+              else{
+                  //User is signed out
+                  GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                          .requestIdToken(getString(R.string.default_web_client_id))
+                          .requestEmail()
+                          .build();
+                  Log.d(TAG, "onAuthStateChanged:signed_out");
+              }
+          }
+        };
+    }
+@Override
+protected void onResume(){
+    super.onResume();
+    mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+}
+    @Override
+    protected void onPause(){
+        super.onPause();
+        if(mAuthStateListener != null){
+            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+        }
     }
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -502,6 +550,7 @@ public class ParentingPlanSetup extends AppCompatActivity implements AdapterView
         UnderSchoolAgeScheduleWeekday underSchoolAgeScheduleWeekday = new UnderSchoolAgeScheduleWeekday(weekdayFrequency,mon, tues, wed, thur, fri, weekdayPickUpTime, weekdayDropOffTime, USAWeekdayEventId);
         USAWeekendEventId = calendarAccess.createUnderSchoolAgeScheduleWeekend(weekendFrequency,weekendPickUpTime, weekendDropOffTime);
         UnderSchoolAgeScheduleWeekend underSchoolAgeScheduleWeekend = new UnderSchoolAgeScheduleWeekend(weekendFrequency,weekendPickUpTime, weekendDropOffTime);
+        Toast.makeText(getApplicationContext(), "Calendar events have been added", Toast.LENGTH_SHORT).show();
         //can restore the data. WHen next is clicked all transactions are pushed to db.
         //Call to save Plan name
         mDatabaseReference = mfirebaseDatabase.getReference().child("User/Plan");
